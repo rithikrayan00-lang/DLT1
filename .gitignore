@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+malaria_model.h5
+uploads/*
+!uploads/.gitkeep
+.env
+.venv/
