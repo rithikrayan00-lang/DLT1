@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cellscope / Malaria screening</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --ink: #ededed; --muted: #8b8b8b; --line: #292929; --paper: #050505; --lime: #c8f35b; --teal: #7bd6c9; --red: #ff7770; font-family: Manrope, sans-serif; color: var(--ink); }
+        * { box-sizing: border-box; }
+        body { margin: 0; min-width: 320px; background: var(--paper); }
+        body:before { content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .2; background-image: radial-gradient(#777 .6px, transparent .6px); background-size: 17px 17px; }
+        .shell { position: relative; max-width: 1220px; margin: auto; padding: 25px 34px 48px; }
+        nav { display: flex; align-items: center; justify-content: space-between; padding-bottom: 25px; border-bottom: 1px solid var(--line); }
+        .brand { display: flex; align-items: center; gap: 11px; font-weight: 800; letter-spacing: -.04em; font-size: 19px; }
+        .brand-mark { width: 27px; height: 27px; display: grid; place-items: center; border-radius: 8px; background: var(--ink); color: #050505; font-size: 15px; }
+        .nav-meta { display: flex; align-items: center; gap: 20px; color: var(--muted); font-size: 12px; }
+        .status { display: flex; align-items: center; gap: 7px; font-family: "DM Mono", monospace; font-size: 11px; color: var(--teal); }
+        .status:before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #45b55f; box-shadow: 0 0 0 4px #dcefdc; }
+        .hero { padding: 84px 0 62px; max-width: 800px; animation: rise .6s ease both; }
+        .eyebrow { margin: 0 0 17px; font: 500 11px "DM Mono", monospace; color: var(--teal); text-transform: uppercase; letter-spacing: .12em; }
+        h1 { margin: 0; max-width: 760px; font-size: clamp(42px, 6vw, 82px); line-height: .98; letter-spacing: -.075em; font-weight: 800; }
+        h1 em { color: var(--teal); font-style: normal; }
+        .intro { max-width: 510px; margin: 25px 0 0; color: var(--muted); font-size: 15px; line-height: 1.7; }
+        .workspace { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 18px; align-items: start; }
+        .panel { border: 1px solid var(--line); background: #0b0b0b; border-radius: 10px; box-shadow: 0 16px 45px rgba(0, 0, 0, .25); }
+        .upload-panel { min-height: 360px; padding: 12px; }
+        .dropzone { min-height: 334px; display: flex; align-items: center; justify-content: center; border: 1px dashed #414141; border-radius: 7px; text-align: center; transition: .2s ease; }
+        .dropzone:hover, .dropzone:focus-within { border-color: var(--teal); background: #101615; }
+        .drop-content { max-width: 330px; padding: 30px; }
+        .upload-icon { width: 54px; height: 54px; display: grid; place-items: center; margin: 0 auto 20px; border-radius: 50%; background: var(--lime); font-size: 25px; }
+        h2, h3 { margin: 0; letter-spacing: -.04em; }
+        h2 { font-size: 20px; }
+        .drop-content p { margin: 9px 0 22px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+        input[type=file] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+        .file-label, button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 6px; padding: 12px 17px; font: 700 12px Manrope, sans-serif; cursor: pointer; }
+        .file-label { background: var(--ink); color: #050505; }
+        .file-label:hover { background: var(--teal); }
+        .analyze-button { margin-top: 2px; background: var(--lime); color: var(--ink); }
+        .analyze-button:hover { background: #b4df48; }
+        .file-name { display: block; min-height: 16px; margin-top: 13px; color: var(--muted); font: 11px "DM Mono", monospace; }
+        .side-panel { padding: 22px; }
+        .side-panel h3 { font-size: 14px; }
+        .side-panel > p { color: var(--muted); font-size: 12px; line-height: 1.65; }
+        .steps { margin: 28px 0 0; padding: 0; list-style: none; }
+        .steps li { display: flex; gap: 12px; padding: 15px 0; border-top: 1px solid var(--line); font-size: 12px; }
+        .step-number { color: var(--teal); font: 500 11px "DM Mono", monospace; }
+        .error { margin: 16px 0 0; padding: 12px; border-radius: 6px; color: #8d302b; background: #fbe8e6; font-size: 12px; }
+        .result-panel { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; animation: rise .5s .1s ease both; }
+        .result-image { min-height: 280px; padding: 12px; background: #151515; }
+        .result-image img { width: 100%; height: 100%; max-height: 360px; object-fit: contain; border-radius: 5px; }
+        .result-copy { padding: 38px; }
+        .result-copy .eyebrow { margin-bottom: 10px; }
+        .result-copy h2 { font-size: 30px; }
+        .result-copy h2.infected { color: var(--red); }
+        .result-copy h2.healthy { color: var(--teal); }
+        .confidence { display: flex; justify-content: space-between; margin-top: 34px; font: 500 12px "DM Mono", monospace; }
+        .meter { height: 7px; margin-top: 10px; overflow: hidden; border-radius: 5px; background: #e3e7e2; }
+        .meter span { display: block; height: 100%; width: 0; border-radius: inherit; background: var(--teal); animation: fill .8s .3s ease forwards; }
+        .note { margin-top: 28px; color: var(--muted); font-size: 11px; line-height: 1.6; }
+        footer { display: flex; justify-content: space-between; margin-top: 70px; color: var(--muted); font: 10px "DM Mono", monospace; }
+        @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fill { to { width: {{ confidence|default('0')|replace('%', '') }}%; } }
+        @media (max-width: 720px) { .shell { padding: 20px 17px 35px; } .nav-meta span { display: none; } .hero { padding: 62px 0 42px; } .workspace, .result-panel { grid-template-columns: 1fr; } .side-panel { order: -1; } .result-panel { grid-column: auto; } .result-copy { padding: 25px; } footer { margin-top: 45px; } }
+    </style>
+</head>
+<body>
+    <main class="shell">
+        <nav>
+            <div class="brand"><span class="brand-mark">+</span> cellscope</div>
+            <div class="nav-meta"><span>Malaria screening workspace</span><span class="status">SYSTEM ONLINE</span></div>
+        </nav>
+
+        <header class="hero">
+            <p class="eyebrow">01 / Image analysis</p>
+            <h1>See what the <em>cell</em> is telling you.</h1>
+            <p class="intro">A focused screening workspace for reading microscope blood-cell images with clarity and speed.</p>
+        </header>
+
+        <section class="workspace">
+            <div class="panel upload-panel">
+                <form method="post" enctype="multipart/form-data">
+                    <div class="dropzone">
+                        <div class="drop-content">
+                            <div class="upload-icon">↑</div>
+                            <h2>Drop a cell image here</h2>
+                            <p>Upload a clear microscope image to start the screening process. JPG, PNG, BMP, GIF, or WEBP.</p>
+                            <label class="file-label" for="file">Choose image <span>↗</span></label>
+                            <input id="file" type="file" name="file" accept="image/*" required>
+                            <span class="file-name" id="file-name">No file selected</span>
+                            <button class="analyze-button" type="submit">Analyze image <span>→</span></button>
+                        </div>
+                    </div>
+                </form>
+                {% if error %}<p class="error">{{ error }}</p>{% endif %}
+            </div>
+
+            <aside class="panel side-panel">
+                <p class="eyebrow">How it works</p>
+                <h3>From image to insight</h3>
+                <p>The local screening model looks for visual patterns associated with malaria parasites.</p>
+                <ol class="steps">
+                    <li><span class="step-number">01</span><span>Upload a readable cell image</span></li>
+                    <li><span class="step-number">02</span><span>Image is normalized for analysis</span></li>
+                    <li><span class="step-number">03</span><span>Review the screening signal</span></li>
+                </ol>
+            </aside>
+
+            {% if result %}
+            <section class="panel result-panel">
+                <div class="result-image"><img src="{{ image_path }}" alt="Uploaded blood cell image"></div>
+                <div class="result-copy">
+                    <p class="eyebrow">Analysis complete</p>
+                    <h2 class="{% if 'Parasitized' in result %}infected{% else %}healthy{% endif %}">{{ result }}</h2>
+                    <div class="confidence"><span>CONFIDENCE</span><strong>{{ confidence }}</strong></div>
+                    <div class="meter"><span></span></div>
+                    <p class="note">Detection mode: {{ detection_mode }}. Use microscope cell images only; illustrations and other photos can produce unreliable results.</p>
+                </div>
+            </section>
+            {% endif %}
+        </section>
+        <footer><span>CELLSCOPE / 2026</span><span>For research screening only</span></footer>
+    </main>
+    <script>
+        const fileInput = document.getElementById('file');
+        const fileName = document.getElementById('file-name');
+        fileInput.addEventListener('change', () => { fileName.textContent = fileInput.files[0]?.name || 'No file selected'; });
+        fileInput.addEventListener('change', () => { if (fileInput.files.length) fileInput.form.querySelector('.dropzone').style.borderColor = '#0b6258'; });
+    </script>
+</body>
+</html>
